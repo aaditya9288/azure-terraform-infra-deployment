@@ -27,6 +27,7 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
 }
+
 resource "azurerm_network_interface" "nic" {
   name                = "aaditya-nic"
   location            = azurerm_resource_group.rg.location
@@ -44,15 +45,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                = "aaditya-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_D2s_v3"
+  size                = "Standard_D2s_v3"  
 
   admin_username = "azureuser"
 
   network_interface_ids = [
     azurerm_network_interface.nic.id
   ]
-
-  admin_password = var.admin_password
+  admin_password                  = var.admin_password
   disable_password_authentication = false
 
   os_disk {
@@ -66,15 +66,17 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "22_04-lts"
     version   = "latest"
   }
-
-  custom_data = base64encode(<<EOF
+custom_data = base64encode(<<EOF
 #!/bin/bash
 apt update -y
-apt install nginx -y
-systemctl start nginx
-systemctl enable nginx
+apt install docker.io -y
+
+systemctl start docker
+systemctl enable docker
+
+docker run -d -p 80:80 nginx
 EOF
-  )
+)
 }
 resource "azurerm_network_security_group" "nsg" {
   name                = "aaditya-nsg"
@@ -105,7 +107,6 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
 }
-
 resource "azurerm_subnet_network_security_group_association" "nsg_assoc" {
   subnet_id                 = azurerm_subnet.subnet.id
   network_security_group_id = azurerm_network_security_group.nsg.id
