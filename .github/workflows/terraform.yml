@@ -26,4 +26,4 @@ jobs:
         run: terraform plan
       
       - name: Terraform Plan
-        run: terraform plan -input=false -var="admin_password=dummy123"
+        run: terraform plan -input=false -var="admin_password=${{ secrets.ADMIN_PASSWORD }}"
