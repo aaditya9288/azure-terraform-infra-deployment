@@ -16,6 +16,11 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Terraform Init
         run: terraform init
 
@@ -23,4 +28,4 @@ jobs:
         run: terraform validate
         
       - name: Terraform Plan
-        run: terraform plan -input=false -var="admin_password=${{ secrets.ADMIN_PASSWORD }}"
+        run: terraform plan -input=false -no-color -var="admin_password=${{ secrets.ADMIN_PASSWORD }}"
