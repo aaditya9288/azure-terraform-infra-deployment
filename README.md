@@ -56,5 +56,3 @@ terraform apply
 
    
    
-
-👉 https://github.com/aaditya9288/azure-terraform-infra-deployment
